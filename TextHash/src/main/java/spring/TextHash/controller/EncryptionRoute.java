@@ -29,9 +29,9 @@ public class EncryptionRoute {
     }
 
     @PostMapping(AppConfig.DECRYPT)
-    public ResponseEntity<EncryptDto> decryptData(@Valid @RequestBody DecryptedRequest request) {
+    public ResponseEntity<DecryptedResponse> decryptData(@Valid @RequestBody DecryptedRequest request) {
         try {
-            EncryptDto response = encryptionService.decryptData(request);
+            DecryptedResponse response = encryptionService.decryptData(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while decrypting the data: " + e.getMessage());

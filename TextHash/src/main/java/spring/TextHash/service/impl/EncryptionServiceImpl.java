@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import spring.TextHash.dto.*;
 import spring.TextHash.service.EncryptionService;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+
 @Service
 @RequiredArgsConstructor
 public class EncryptionServiceImpl implements EncryptionService {
@@ -19,9 +22,9 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     @Override
-    public EncryptDto decryptData(DecryptedRequest request) {
-        return null;
+    public DecryptedResponse decryptData(DecryptedRequest request) {
+        SecretKey decodedKey = EncryptDecryptUtil.decodeKey(request.getSecretKey());
+        String decrypted = EncryptDecryptUtil.decrypt(request, decodedKey);
+        return new DecryptedResponse(decrypted);
     }
-
-
 }

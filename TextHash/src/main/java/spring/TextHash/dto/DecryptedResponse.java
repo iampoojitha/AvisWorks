@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EncryptResponse {
-    private String encryptedText;
-    private String secretKey;
+public class DecryptedResponse {
+    private String decryptedData;
 }

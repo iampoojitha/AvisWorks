@@ -6,6 +6,6 @@ public interface EncryptionService {
 
     public EncryptResponse encryptData(TextHashRequest request);
 
-    public EncryptDto decryptData(DecryptedRequest request);
+    public DecryptedResponse decryptData(DecryptedRequest request);
 
 }
