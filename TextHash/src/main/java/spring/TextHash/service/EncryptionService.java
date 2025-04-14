@@ -8,4 +8,6 @@ public interface EncryptionService {
 
     public DecryptedResponse decryptData(DecryptedRequest request);
 
+    public DecryptedResponse getPlainText(String token);
+
 }

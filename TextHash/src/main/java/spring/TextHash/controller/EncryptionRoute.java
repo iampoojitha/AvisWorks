@@ -3,10 +3,7 @@ package spring.TextHash.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spring.TextHash.config.AppConfig;
 import spring.TextHash.dto.*;
 import spring.TextHash.service.EncryptionService;
@@ -35,6 +32,16 @@ public class EncryptionRoute {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while decrypting the data: " + e.getMessage());
+        }
+    }
+
+    @GetMapping(AppConfig.GET_TEXT)
+    public ResponseEntity<DecryptedResponse> getPlainText(@PathVariable String token) {
+        try {
+            DecryptedResponse response = encryptionService.getPlainText(token);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Something went wrong while getting the plain text: \" + e.getMessage()");
         }
     }
 }

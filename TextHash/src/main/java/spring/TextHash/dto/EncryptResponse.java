@@ -8,4 +8,5 @@ import lombok.Data;
 public class EncryptResponse {
     private String encryptedText;
     private String secretKey;
+    private String url;
 }
