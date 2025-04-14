@@ -10,4 +10,5 @@ public class AppConfig {
     public static final String ENCRYPT = "/encrypt";
     public static final String DECRYPT = "/decrypt";
     public static final String ENCRYPT_ROUTE = "api";
+    public static final String GET_TEXT = "/url/{token}";
 }

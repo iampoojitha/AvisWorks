@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.crypto.SecretKey;
 
 @Data
+@AllArgsConstructor
 public class DecryptedRequest {
     @NotBlank(message = "Encrypted data shouldn't be blank")
     private String encryptedText;
