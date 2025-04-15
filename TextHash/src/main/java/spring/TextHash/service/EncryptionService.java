@@ -4,10 +4,10 @@ import spring.TextHash.dto.*;
 
 public interface EncryptionService {
 
-    public EncryptResponse encryptData(TextHashRequest request);
+    public String encryptData(String plainText);
 
-    public DecryptedResponse decryptData(DecryptedRequest request);
+//    public DecryptedResponse decryptData(DecryptedRequest request);
 
-    public DecryptedResponse getPlainText(String token);
+    public String getPlainText(String token);
 
 }

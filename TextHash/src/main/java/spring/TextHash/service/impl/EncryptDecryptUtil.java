@@ -24,11 +24,11 @@ public class EncryptDecryptUtil {
         }
     }
 
-    public static String encrypt(TextHashRequest request) {
+    public static String encrypt(String plainText, SecretKey key) {
         try {
             var cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, request.getKey());
-            var encryptedBytes = cipher.doFinal(request.getPlainText().getBytes());
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            var encryptedBytes = cipher.doFinal(plainText.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
             throw new RuntimeException("encrypt failed: " + e.getMessage());
