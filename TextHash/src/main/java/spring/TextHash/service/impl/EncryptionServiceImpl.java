@@ -7,6 +7,8 @@ import spring.TextHash.service.EncryptionService;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,19 +17,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EncryptionServiceImpl implements EncryptionService {
 
-    private static Map<String, DecryptedRequest> encryptedDataStore = new HashMap<>();
+    private static Map<String, EncryptResponse> encryptedData = new HashMap<>();
 
     @Override
-    public EncryptResponse encryptData(TextHashRequest request) {
+    public String encryptData(String plainText) {
         var key = EncryptDecryptUtil.generateKey();
         String encodedKey = EncryptDecryptUtil.encodeKey(key);
-        request.setKey(key);
-        String encryptedCode = EncryptDecryptUtil.encrypt(request);
-        String url = generateUrl(getToken(encryptedCode, encodedKey));
-        return new EncryptResponse(encryptedCode, encodedKey, url);
+        String encryptedCode = EncryptDecryptUtil.encrypt(plainText, key);
+        var expirationTime = LocalDateTime.now().plusSeconds(8);
+        String uid = UUID.randomUUID().toString();
+        String url = generateUrl(uid);
+        EncryptResponse encrypt = new EncryptResponse(encryptedCode, encodedKey, url, expirationTime, false);
+        encryptedData.put(uid, encrypt);
+        return "URL: " + url + "\n" +
+                "Expires At: " + expirationTime + "\n";
     }
 
-    @Override
     public DecryptedResponse decryptData(DecryptedRequest request) {
         SecretKey decodedKey = EncryptDecryptUtil.decodeKey(request.getSecretKey());
         String decrypted = EncryptDecryptUtil.decrypt(request, decodedKey);
@@ -35,16 +40,23 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     @Override
-    public DecryptedResponse getPlainText(String token) {
-        var tokenDetails = encryptedDataStore.get(token);
-        return decryptData(tokenDetails);
-    }
-
-    private static String getToken(String encryptedCode, String encodedKey) {
-        String uniqueId = UUID.randomUUID().toString();
-        DecryptedRequest encryptData = new DecryptedRequest(encryptedCode, encodedKey);
-        encryptedDataStore.put(uniqueId, encryptData);
-        return uniqueId;
+    public String getPlainText(String token) {
+        var tokenDetails = encryptedData.get(token);
+        if (LocalDateTime.now().isAfter(tokenDetails.getExpirationTime())) {
+            return "This data has expired.";
+        }
+        if (tokenDetails.getIsRead()) {
+            return "This data is already read";
+        }
+        var response = decryptData(new DecryptedRequest(tokenDetails.getEncryptedText(), tokenDetails.getSecretKey()));
+        Duration timeLeft = Duration.between(LocalDateTime.now(), tokenDetails.getExpirationTime());
+        long hours = timeLeft.toHours();
+        long minutes = timeLeft.toMinutes() % 60;
+        long seconds = timeLeft.getSeconds() % 60;
+        tokenDetails.setIsRead(true);
+        return  "Output: " + response.getDecryptedData() + "\n" +
+                "Read: true\n" +
+                "TTD: " + hours + "h " + minutes + "m " + seconds + "s";
     }
 
     private String generateUrl(String token) {

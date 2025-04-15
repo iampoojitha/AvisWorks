@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

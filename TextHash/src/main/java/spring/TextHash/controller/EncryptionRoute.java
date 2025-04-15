@@ -2,6 +2,7 @@ package spring.TextHash.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.TextHash.config.AppConfig;
@@ -15,30 +16,20 @@ public class EncryptionRoute {
 
     private final EncryptionService encryptionService;
 
-    @PostMapping(AppConfig.ENCRYPT)
-    public ResponseEntity<EncryptResponse> encryptData(@Valid @RequestBody TextHashRequest request) {
+    @PostMapping(path = AppConfig.ENCRYPT, consumes = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> encryptData(@RequestBody String plainText) {
         try {
-            EncryptResponse response = encryptionService.encryptData(request);
+            String response = encryptionService.encryptData(plainText);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while hashing the text: " + e.getMessage());
         }
     }
 
-    @PostMapping(AppConfig.DECRYPT)
-    public ResponseEntity<DecryptedResponse> decryptData(@Valid @RequestBody DecryptedRequest request) {
-        try {
-            DecryptedResponse response = encryptionService.decryptData(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            throw new RuntimeException("Something went wrong while decrypting the data: " + e.getMessage());
-        }
-    }
-
     @GetMapping(AppConfig.GET_TEXT)
-    public ResponseEntity<DecryptedResponse> getPlainText(@PathVariable String token) {
+    public ResponseEntity<String> getPlainText(@PathVariable String token) {
         try {
-            DecryptedResponse response = encryptionService.getPlainText(token);
+            String response = encryptionService.getPlainText(token);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while getting the plain text: \" + e.getMessage()");
