@@ -1,6 +1,7 @@
 package spring.TextHash.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import spring.TextHash.dto.*;
 import spring.TextHash.service.EncryptionService;
@@ -11,7 +12,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +42,16 @@ public class EncryptionServiceImpl implements EncryptionService {
         return new DecryptedResponse(decrypted);
     }
 
+    @Scheduled(cron = "0 */5 * * * ?")
+    public void prune(){
+        final LocalDateTime now = LocalDateTime.now();
+        final Set<String> deleteKeys = encryptedData.entrySet().stream()
+                .filter(e-> now.isAfter(e.getValue().getExpirationTime()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+        deleteKeys.forEach(encryptedData::remove);
+    }
+
     @Override
     public String getPlainText(String token) {
         var tokenDetails = encryptedData.get(token);
@@ -54,6 +67,7 @@ public class EncryptionServiceImpl implements EncryptionService {
         long minutes = timeLeft.toMinutes() % 60;
         long seconds = timeLeft.getSeconds() % 60;
         tokenDetails.setIsRead(true);
+        prune();
         return  "Output: " + response.getDecryptedData() + "\n" +
                 "Read: true\n" +
                 "TTD: " + hours + "h " + minutes + "m " + seconds + "s";

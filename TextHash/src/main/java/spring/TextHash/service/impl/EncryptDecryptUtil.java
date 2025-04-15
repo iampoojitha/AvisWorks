@@ -1,7 +1,6 @@
 package spring.TextHash.service.impl;
 
 import spring.TextHash.dto.DecryptedRequest;
-import spring.TextHash.dto.TextHashRequest;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
