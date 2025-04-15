@@ -16,7 +16,7 @@ public class EncryptDecryptUtil {
 
     public static SecretKey generateKey() {
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
+            var keyGen = KeyGenerator.getInstance(ALGORITHM);
             keyGen.init(128);
             return keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
