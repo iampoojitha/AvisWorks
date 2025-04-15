@@ -1,6 +1,5 @@
 package spring.TextHash.service.impl;
 
-import org.springframework.stereotype.Component;
 import spring.TextHash.dto.DecryptedRequest;
 import spring.TextHash.dto.TextHashRequest;
 
@@ -11,7 +10,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-@Component
 public class EncryptDecryptUtil {
 
     private static final String ALGORITHM = "AES";

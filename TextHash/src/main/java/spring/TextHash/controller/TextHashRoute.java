@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.TextHash.config.AppConfig;
-import spring.TextHash.dto.DecryptedRequest;
-import spring.TextHash.dto.EncryptDto;
 import spring.TextHash.dto.TextHashRequest;
 import spring.TextHash.dto.TextHashResponse;
 import spring.TextHash.service.TextHashService;
