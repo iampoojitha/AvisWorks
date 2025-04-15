@@ -1,10 +1,12 @@
 package spring.TextHash.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import spring.TextHash.config.AppConfig;
 import spring.TextHash.dto.*;
 import spring.TextHash.service.EncryptionService;
@@ -17,22 +19,21 @@ public class EncryptionRoute {
     private final EncryptionService encryptionService;
 
     @PostMapping(path = AppConfig.ENCRYPT, consumes = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> encryptData(@RequestBody String plainText) {
+    public String encryptData(@RequestBody String plainText) {
         try {
-            String response = encryptionService.encryptData(plainText);
-            return ResponseEntity.ok(response);
+           return encryptionService.encryptData(plainText);
         } catch (Exception e) {
-            throw new RuntimeException("Something went wrong while hashing the text: " + e.getMessage());
+            e.getStackTrace();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong while encrypting the data");
         }
     }
 
     @GetMapping(AppConfig.GET_TEXT)
-    public ResponseEntity<String> getPlainText(@PathVariable String token) {
+    public String getPlainText(@PathVariable String token) {
         try {
-            String response = encryptionService.getPlainText(token);
-            return ResponseEntity.ok(response);
+            return encryptionService.getPlainText(token);
         } catch (Exception e) {
-            throw new RuntimeException("Something went wrong while getting the plain text: \" + e.getMessage()");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Information expired");
         }
     }
 }
