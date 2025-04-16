@@ -6,38 +6,38 @@ import org.springframework.stereotype.Service;
 import spring.TextHash.dto.*;
 import spring.TextHash.service.EncryptionService;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-
 
 @Service
 @RequiredArgsConstructor
 public class EncryptionServiceImpl implements EncryptionService {
 
     private static Map<String, EncryptResponse> encryptedData = new HashMap<>();
-    @Value("${token.expiration.seconds}")
-    private long expirationSeconds;
+    @Value("${token.expiration}")
+    private long expiration;
+
+    @Value("${user.password}")
+    private String userPassword;
 
     @Override
     public String encryptData(String plainText) {
         var key = EncryptDecryptUtil.generateKey();
         String encodedKey = EncryptDecryptUtil.encodeKey(key);
+        String encodedPassword = Base64.getEncoder().encodeToString(userPassword.getBytes());
         String encryptedCode = EncryptDecryptUtil.encrypt(plainText, key);
-        var expirationTime = LocalDateTime.now().plusSeconds(8);
+        var expirationTime = LocalDateTime.now().plusMinutes(expiration);
         String uid = UUID.randomUUID().toString();
         String url = generateUrl(uid);
         EncryptResponse encrypt = new EncryptResponse(encryptedCode, encodedKey, url, expirationTime, false);
         encryptedData.put(uid, encrypt);
         return "URL: " + url + "\n" +
-                "Expires At: " + expirationTime + "\n";
+                "Expires At: " + expirationTime + "\n" +
+                "Password: " + encodedPassword + "\n";
     }
 
     public DecryptedResponse decryptData(DecryptedRequest request) {
@@ -57,8 +57,12 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     @Override
-    public String getPlainText(String token) {
+    public String getPlainText(String token, String password) {
         var tokenDetails = encryptedData.get(token);
+        String decodedPassword = new String(Base64.getDecoder().decode(password));
+        if (!decodedPassword.equals(userPassword)) {
+            return "Incorrect password";
+        }
         if (LocalDateTime.now().isAfter(tokenDetails.getExpirationTime())) {
             return "This data has expired.";
         }
