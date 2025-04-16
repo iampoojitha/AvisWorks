@@ -15,12 +15,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 @RequiredArgsConstructor
 public class EncryptionServiceImpl implements EncryptionService {
 
     private static Map<String, EncryptResponse> encryptedData = new HashMap<>();
+    @Value("${token.expiration.seconds}")
+    private long expirationSeconds;
 
     @Override
     public String encryptData(String plainText) {
