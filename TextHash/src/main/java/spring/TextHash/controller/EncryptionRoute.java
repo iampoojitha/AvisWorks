@@ -29,9 +29,9 @@ public class EncryptionRoute {
     }
 
     @GetMapping(AppConfig.GET_TEXT)
-    public String getPlainText(@PathVariable String token) {
+    public String getPlainText(@PathVariable String token, @RequestHeader("password") String password) {
         try {
-            return encryptionService.getPlainText(token);
+            return encryptionService.getPlainText(token, password);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Information expired");
         }
